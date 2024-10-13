@@ -10,7 +10,7 @@ const App: React.FC = () => {
   const [isScrumMaster, setIsScrumMaster] = useState<boolean>(false);
 
   useEffect(() => {
-    const newSocket = io('http://localhost:3001');
+    const newSocket = io('https://poker.letsprogram.in/');
     setSocket(newSocket);
 
     return () => {
