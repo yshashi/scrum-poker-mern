@@ -8,39 +8,27 @@ interface PokerCardProps {
   onClick: () => void;
 }
 
-const PokerCard: React.FC<PokerCardProps> = ({ value, selected, revealed, onClick }) => {
+const PokerCard: React.FC<PokerCardProps> = ({ value, selected, onClick }) => {
+  const getBackgroundColor = () => {
+    if (value === '?') return 'bg-gray-200';
+    if (value === '☕') return 'bg-yellow-100';
+    return 'bg-white';
+  };
+
   return (
     <motion.div
-      className={`cursor-pointer bg-white border-2 rounded-lg shadow-md flex items-center justify-center h-24 ${
+      className={`cursor-pointer border-2 rounded-lg shadow-md flex w-24 items-center justify-center aspect-[2/3] ${
         selected ? 'border-blue-500' : 'border-gray-300'
-      }`}
+      } ${getBackgroundColor()}`}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       onClick={onClick}
     >
-      <motion.div
-        className="w-full h-full flex items-center justify-center"
-        initial={false}
-        animate={{ rotateY: revealed ? 180 : 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        {revealed ? (
-          <motion.span
-            className="text-3xl font-bold"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-          >
-            {value}
-          </motion.span>
-        ) : (
-          <motion.div
-            className="w-12 h-12 bg-blue-500 rounded-full"
-            initial={{ opacity: 1 }}
-            animate={{ opacity: revealed ? 0 : 1 }}
-          />
-        )}
-      </motion.div>
+      <div className="relative w-full h-full flex items-center justify-center">
+        <img src="/sp.png" className="absolute top-2 left-2 w-8 h-8" />
+        <img className="absolute bottom-2 right-2 w-8 h-8" src="/sp.png" />
+        <span className="text-xl">{value}</span>
+      </div>
     </motion.div>
   );
 };
