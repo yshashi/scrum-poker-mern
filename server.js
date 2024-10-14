@@ -32,7 +32,7 @@ io.on('connection', (socket) => {
       lastActivity: Date.now() // Set initial timestamp
     });
     socket.join(roomId);
-    callback(roomId);
+    callback(roomId, rooms.get(roomId).users);
     io.to(roomId).emit('user-joined', rooms.get(roomId).users);
     // total connected users
     console.log(`Total connected users: ${io.sockets.adapter.rooms.size}`);
@@ -44,7 +44,7 @@ io.on('connection', (socket) => {
       room.users.push({ id: socket.id, name: username, estimate: null });
       socket.join(roomId);
       room.lastActivity = Date.now(); // Update timestamp when user joins
-      callback(true);
+      callback(true, rooms.get(roomId).users);
       io.to(roomId).emit('user-joined', room.users);
     } else {
       callback(false);
@@ -158,3 +158,9 @@ function cleanUpInactiveRooms() {
 
 // Schedule the cleanup job to run every 2 hours
 setInterval(cleanUpInactiveRooms, 2 * 60 * 60 * 1000); // 2 hours in milliseconds
+
+export const userType = {
+  scrumMaster: "Scrum Master",
+  developer: "Developer",
+  qa: "QA",
+}

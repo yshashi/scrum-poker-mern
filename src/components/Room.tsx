@@ -11,17 +11,19 @@ interface RoomProps {
   room: string;
   username: string;
   isScrumMaster: boolean;
+  joinedUsers: User[];
   setIsScrumMaster: (value: boolean) => void;
 }
 
-interface User {
+export interface User {
   id: string;
   name: string;
   estimate: string | null;
 }
 
-const Room: React.FC<RoomProps> = ({ socket, room, isScrumMaster, setIsScrumMaster }) => {
-  const [users, setUsers] = useState<User[]>([]);
+const Room: React.FC<RoomProps> = ({ socket, room, isScrumMaster, setIsScrumMaster, joinedUsers }) => {
+  const [users, setUsers] = useState<User[]>(joinedUsers);
+  const [scrumMasterId, setScrumMasterId] = useState<string>("");
   const [estimate, setEstimate] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -48,6 +50,7 @@ const Room: React.FC<RoomProps> = ({ socket, room, isScrumMaster, setIsScrumMast
     });
 
     socket.on("scrum-master-changed", (newScrumMasterId: string) => {
+      setScrumMasterId(newScrumMasterId);
       setIsScrumMaster(newScrumMasterId === socket.id);
     });
 
@@ -56,8 +59,6 @@ const Room: React.FC<RoomProps> = ({ socket, room, isScrumMaster, setIsScrumMast
       const allSame = estimates.every((estimate) => estimate === estimates[0]);
       setShowConfetti(allSame && estimates.length > 1);
     };
-
-    console.log("Render");
 
     return () => {
       socket.off("user-joined");
@@ -122,13 +123,13 @@ const Room: React.FC<RoomProps> = ({ socket, room, isScrumMaster, setIsScrumMast
         </div>
         <div className="bg-gray-100 p-4 rounded-lg mb-6">
           <h3 className="text-lg font-semibold mb-4">Results</h3>
-          {isScrumMaster && estimate && (
+          {isScrumMaster && (
             <div className="flex justify-between items-center mb-4">
               <button onClick={resetEstimates} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors">
                 Delete Estimates
               </button>
               <button onClick={toggleEstimates} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
-                {revealed ? "Hide" : "Reveal"}
+                {revealed ? "Hide" : "Reveal" } Estimates
               </button>
             </div>
           )}
@@ -151,7 +152,7 @@ const Room: React.FC<RoomProps> = ({ socket, room, isScrumMaster, setIsScrumMast
         </div>
       </div>
       <div className="h-min min-w-80 bg-gray-100 p-4 rounded-lg">
-        <UserList users={users} currentUser={socket.id as string} isScrumMaster={isScrumMaster} onChangeScrumMaster={changeScrumMaster} />
+        <UserList users={users} currentUser={socket.id as string} isScrumMaster={isScrumMaster} onChangeScrumMaster={changeScrumMaster} scrumMasterId={scrumMasterId} />
       </div>
     </div>
   );
