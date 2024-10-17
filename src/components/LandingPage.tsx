@@ -1,10 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Users, ArrowRight } from 'lucide-react';
+import { Users, ArrowRight, Sun, Moon } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 
 const LandingPage: React.FC = () => {
+  const { theme, toggleTheme } = useTheme();
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex flex-col items-center justify-center text-white">
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gradient-to-br from-gray-900 to-gray-700' : 'bg-gradient-to-br from-blue-500 to-purple-600'} flex flex-col items-center justify-center text-white`}>
+      <button
+        onClick={toggleTheme}
+        className="absolute top-4 right-4 p-2 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 transition-colors"
+      >
+        {theme === 'dark' ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
+      </button>
       <div className="max-w-4xl text-center">
         <div className="flex items-center justify-center mb-8">
           <Users className="w-16 h-16 mr-4" />
@@ -16,7 +25,7 @@ const LandingPage: React.FC = () => {
         <div className="space-y-4">
           <Link
             to="/create"
-            className="inline-flex items-center bg-white text-blue-600 px-6 py-3 rounded-full text-lg font-semibold hover:bg-blue-100 transition-colors"
+            className={`inline-flex items-center ${theme === 'dark' ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white text-blue-600 hover:bg-blue-100'} px-6 py-3 rounded-full text-lg font-semibold transition-colors`}
           >
             Start a New Session
             <ArrowRight className="ml-2 w-5 h-5" />
