@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
+import LandingPage from './components/LandingPage';
 import RoomCreation from './components/RoomCreation';
 import Room, { User } from './components/Room';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 const App: React.FC = () => {
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [room, setRoom] = useState<string | null>(null);
-  const [username, setUsername] = useState<string>('');
-  const [isScrumMaster, setIsScrumMaster] = useState<boolean>(false);
-  const [users, setUsers] = useState<User[]>([]);
+  const [socket, setSocket] = React.useState<Socket | null>(null);
+  const [room, setRoom] = React.useState<string | null>(null);
+  const [username, setUsername] = React.useState<string>('');
+  const [isScrumMaster, setIsScrumMaster] = React.useState<boolean>(false);
+  const [users, setUsers] = React.useState<User[]>([]);
 
-  useEffect(() => {
-    const newSocket = io('https://poker.letsprogram.in/');
+  React.useEffect(() => {
+    const newSocket = io('https://poker.letsprogram.in');
     setSocket(newSocket);
 
     return () => {
@@ -45,20 +48,34 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      {!room ? (
-        <RoomCreation createRoom={createRoom} joinRoom={joinRoom} />
-      ) : (
-        <Room
-          socket={socket!}
-          room={room}
-          username={username}
-          isScrumMaster={isScrumMaster}
-          setIsScrumMaster={setIsScrumMaster}
-          joinedUsers={users}
-        />
-      )}
-    </div>
+    <ThemeProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route
+            path="/create"
+            element={<RoomCreation createRoom={createRoom} joinRoom={joinRoom} room={room} />}
+          />
+          <Route
+            path="/room/:roomId"
+            element={
+              socket && room ? (
+                <Room
+                  socket={socket}
+                  room={room}
+                  username={username}
+                  isScrumMaster={isScrumMaster}
+                  joinedUsers={users}
+                  setIsScrumMaster={setIsScrumMaster}
+                />
+              ) : (
+                <RoomCreation createRoom={createRoom} joinRoom={joinRoom} room={null} />
+              )
+            }
+          />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 };
 

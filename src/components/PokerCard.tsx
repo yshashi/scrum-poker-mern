@@ -1,5 +1,6 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React from "react";
+import { motion } from "framer-motion";
+import { useTheme } from "../contexts/ThemeContext";
 
 interface PokerCardProps {
   value: string;
@@ -9,17 +10,29 @@ interface PokerCardProps {
 }
 
 const PokerCard: React.FC<PokerCardProps> = ({ value, selected, onClick }) => {
+  const { theme } = useTheme();
+
   const getBackgroundColor = () => {
-    if (value === '?') return 'bg-gray-200';
-    if (value === '☕') return 'bg-yellow-100';
-    return 'bg-white';
+    if (theme === "dark") {
+      if (value === "🤷🏻") return "bg-gray-700";
+      if (value === "☕") return "bg-yellow-900";
+      return "bg-gray-800";
+    } else {
+      if (value === "🤷🏻") return "bg-gray-200";
+      if (value === "☕") return "bg-yellow-100";
+      return "bg-white";
+    }
   };
 
   return (
     <motion.div
-      className={`cursor-pointer border-2 rounded-lg shadow-md flex w-24 items-center justify-center aspect-[2/3] ${
-        selected ? 'border-blue-500' : 'border-gray-300'
-      } ${getBackgroundColor()}`}
+      className={`cursor-pointer border-2 rounded-lg shadow-md flex w-24 items-center justify-center aspect-[2/3] relative ${
+        selected
+          ? "glowing-shadow" // Apply the glowing shadow when selected
+          : theme === "dark"
+          ? "border-gray-600"
+          : "border-gray-300"
+      } ${getBackgroundColor()} ${theme === "dark" ? "text-white" : "text-gray-800"}`}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       onClick={onClick}
