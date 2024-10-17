@@ -1,22 +1,35 @@
 import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Users } from 'lucide-react';
 
 interface RoomCreationProps {
   createRoom: (name: string) => void;
   joinRoom: (roomId: string, name: string) => void;
+  room: string | null;
 }
 
-const RoomCreation: React.FC<RoomCreationProps> = ({ createRoom, joinRoom }) => {
+const RoomCreation: React.FC<RoomCreationProps> = ({ createRoom, joinRoom, room }) => {
   const [name, setName] = useState('');
   const [roomId, setRoomId] = useState('');
   const [isJoining, setIsJoining] = useState(false);
+  const navigate = useNavigate();
+  const { roomId: urlRoomId } = useParams<{ roomId?: string }>();
+
+  React.useEffect(() => {
+    if (urlRoomId) {
+      setRoomId(urlRoomId);
+      setIsJoining(true);
+    }
+  }, [urlRoomId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isJoining) {
       joinRoom(roomId, name);
+      navigate(`/room/${roomId}`);
     } else {
       createRoom(name);
+      navigate(`/room/${room}`);
     }
   };
 

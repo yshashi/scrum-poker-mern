@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Socket } from "socket.io-client";
+import { useParams, useNavigate } from 'react-router-dom';
 import UserList from "./UserList";
 import PokerCard from "./PokerCard";
 import { Settings } from "lucide-react";
 import Confetti from "react-confetti";
-import ScrumPokerCard from "./ScrumPokercard";
 
 interface RoomProps {
   socket: Socket;
@@ -28,6 +28,14 @@ const Room: React.FC<RoomProps> = ({ socket, room, isScrumMaster, setIsScrumMast
   const [revealed, setRevealed] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const cardValues = ["?", "☕", "0", "0.5", "1", "2", "3", "5", "8", "13", "20", "40", "100"];
+  const { roomId } = useParams<{ roomId: string }>();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (room !== roomId) {
+      navigate(`/room/${room}`);
+    }
+  }, [room, roomId, navigate]);
 
   useEffect(() => {
     socket.on("user-joined", (updatedUsers: User[]) => {
@@ -54,12 +62,6 @@ const Room: React.FC<RoomProps> = ({ socket, room, isScrumMaster, setIsScrumMast
       setIsScrumMaster(newScrumMasterId === socket.id);
     });
 
-    const checkConsensus = (users: User[]) => {
-      const estimates = users.map((user) => user.estimate).filter((estimate) => estimate !== null);
-      const allSame = estimates.every((estimate) => estimate === estimates[0]);
-      setShowConfetti(allSame && estimates.length > 1);
-    };
-
     return () => {
       socket.off("user-joined");
       socket.off("user-left");
@@ -68,6 +70,12 @@ const Room: React.FC<RoomProps> = ({ socket, room, isScrumMaster, setIsScrumMast
       socket.off("scrum-master-changed");
     };
   }, [socket, setIsScrumMaster, users]);
+
+  const checkConsensus = (users: User[]) => {
+    const estimates = users.map((user) => user.estimate).filter((estimate) => estimate !== null);
+    const allSame = estimates.every((estimate) => estimate === estimates[0]);
+    setShowConfetti(allSame && estimates.length > 1);
+  };
 
   const submitEstimate = (value: string) => {
     setEstimate(value);
@@ -159,3 +167,34 @@ const Room: React.FC<RoomProps> = ({ socket, room, isScrumMaster, setIsScrumMast
 };
 
 export default Room;
+
+import { motion } from 'framer-motion';
+
+interface ScrumPokerCardProps {
+  number: string;
+  revealed: boolean;
+}
+
+const ScrumPokerCard: React.FC<ScrumPokerCardProps> = ({ number, revealed }) => {
+  return (
+    <motion.div
+      className={`relative w-8 h-8 p-4 bg-white shadow-lg rounded-lg cursor-pointer ${
+        revealed ? '' : 'bg-gray-200'
+      }`}
+      animate={{ rotateY: revealed ? 0 : 180 }}
+      transition={{ duration: 0.8 }}
+      style={{ perspective: 1000 }}
+    >
+      <motion.div
+        className="absolute inset-0 flex justify-center items-center"
+        style={{ backfaceVisibility: 'hidden' }}
+      >
+        {revealed ? (
+          <div className="text-base">{number}</div>
+        ) : (
+          <div className="text-xl text-gray-500"><span className="text-xl"><img className="w-8 h-8" src="/sp.png" /></span></div>
+        )}
+      </motion.div>
+    </motion.div>
+  );
+};

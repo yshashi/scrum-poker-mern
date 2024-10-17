@@ -13,7 +13,7 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: 'https://pocker.letsprogram.in',
+    origin: 'http://localhost:5174',
     methods: ['GET', 'POST'],
   },
 });
