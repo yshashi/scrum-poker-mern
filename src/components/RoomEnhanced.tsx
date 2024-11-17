@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import UserList from "./UserList";
 import PokerCard from "./PokerCard";
-import { Sun, Moon, Users, Share2, Check } from "lucide-react";
+import { Sun, Moon, Users } from "lucide-react";
 import Confetti from "react-confetti";
 import { useTheme } from "../contexts/ThemeContext";
 import ScrumPokerCard from "./ScrumPokercard";
@@ -40,21 +40,9 @@ const Room: React.FC<RoomProps> = ({
   const [showConfetti, setShowConfetti] = useState(false);
   const [maxEstimate, setMaxEstimate] = useState<string | null>(null);
   const [showUserList, setShowUserList] = useState(false);
-  const [copied, setCopied] = useState(false);
   const cardValues = ["🤷🏻", "☕", "0", "0.5", "1", "2", "3", "5", "8", "13", "20", "40", "100"];
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
-
-  const copyRoomLink = async () => {
-    const url = `${window.location.origin}/room/${room}`;
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy:', err);
-    }
-  };
 
   useEffect(() => {
     if (room !== roomId) {
@@ -197,36 +185,14 @@ const Room: React.FC<RoomProps> = ({
               <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">
                 Scrum Poker
               </h2>
-              <div className="flex gap-2 items-center mt-1">
-                <motion.h3
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                  className="text-gray-500"
-                >
-                  Room ID: {room}
-                </motion.h3>
-                <motion.button
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={copyRoomLink}
-                  className={`
-                    p-1.5 rounded-lg transition-colors
-                    ${theme === "dark" 
-                      ? "hover:bg-gray-700 text-gray-400 hover:text-gray-200" 
-                      : "hover:bg-gray-100 text-gray-600 hover:text-gray-800"}
-                  `}
-                  title="Copy room link"
-                >
-                  {copied ? (
-                    <Check className="w-4 h-4 text-green-500" />
-                  ) : (
-                    <Share2 className="w-4 h-4" />
-                  )}
-                </motion.button>
-              </div>
+              <motion.h3
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-gray-500"
+              >
+                Room ID: {room}
+              </motion.h3>
             </div>
           </motion.div>
 
@@ -260,44 +226,19 @@ const Room: React.FC<RoomProps> = ({
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className={`
-              ${theme === "dark" ? "bg-gray-700/50" : "bg-gray-100/50"}
-              p-6 rounded-xl mb-6 shadow-inner backdrop-blur-sm
-              border border-gray-200/10
-            `}
+            className={`${
+              theme === "dark" ? "bg-gray-700" : "bg-gray-100"
+            } p-6 rounded-lg mb-6 shadow-inner`}
           >
-            <div className="flex flex-col gap-4 justify-between items-start mb-6 sm:flex-row sm:items-center">
-              <motion.div 
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                className="flex gap-3 items-center"
-              >
-                <h3 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">
-                  Results
-                </h3>
-                {revealed && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className={`
-                      px-2.5 py-0.5 rounded-full text-sm font-medium mt-1 ml-4
-                      ${theme === "dark" ? "bg-gray-600" : "bg-gray-200"}
-                    `}
-                  >
-                    Revealed
-                  </motion.div>
-                )}
-              </motion.div>
-
+            <div className="flex gap-4 justify-between items-center mb-4 h-12">
+              <h3 className="text-xl font-semibold">Results</h3>
               {maxEstimate && (
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="flex gap-3 items-center px-4 py-2 bg-gradient-to-r rounded-lg from-blue-500/10 to-purple-500/10"
+                  className="flex gap-2 items-center"
                 >
-                  <span className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
-                    Team's consensus
-                  </span>
+                  <span>Maximum estimated number is </span>
                   <ScrumPokerCard number={maxEstimate} revealed={true} />
                 </motion.div>
               )}
@@ -308,28 +249,29 @@ const Room: React.FC<RoomProps> = ({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
-                className="flex flex-col gap-4 justify-between items-stretch mb-6 sm:flex-row"
+                className="flex gap-4 justify-between items-center mb-4"
               >
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={resetEstimates}
-                  className={`
-                    ${theme === "dark" ? "bg-red-600 hover:bg-red-700" : "bg-red-500 hover:bg-red-600"}
-                    text-white px-6 py-3 rounded-lg transition-colors shadow-md flex-1 font-semibold
-                  `}
+                  className={`${
+                    theme === "dark"
+                      ? "bg-red-600 hover:bg-red-700"
+                      : "bg-red-500 hover:bg-red-600"
+                  } text-white px-6 py-2 rounded-lg transition-colors shadow-md flex-1`}
                 >
                   Delete Estimates
                 </motion.button>
-
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={toggleEstimates}
-                  className={`
-                    ${theme === "dark" ? "bg-blue-600 hover:bg-blue-700" : "bg-blue-500 hover:bg-blue-600"}
-                    text-white px-6 py-3 rounded-lg transition-colors shadow-md flex-1 font-semibold
-                  `}
+                  className={`${
+                    theme === "dark"
+                      ? "bg-blue-600 hover:bg-blue-700"
+                      : "bg-blue-500 hover:bg-blue-600"
+                  } text-white px-6 py-2 rounded-lg transition-colors shadow-md flex-1`}
                 >
                   {revealed ? "Hide" : "Reveal"} Estimates
                 </motion.button>
@@ -340,77 +282,33 @@ const Room: React.FC<RoomProps> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="overflow-hidden rounded-lg"
             >
               <table className="w-full">
                 <thead>
                   <tr>
-                    <th className="px-4 py-3 text-left border-b border-gray-200/10">
-                      <span className={theme === "dark" ? "text-gray-400" : "text-gray-600"}>
-                        Name
-                      </span>
-                    </th>
-                    <th className="px-4 py-3 text-right border-b border-gray-200/10">
-                      <span className={theme === "dark" ? "text-gray-400" : "text-gray-600"}>
-                        Story Points
-                      </span>
-                    </th>
+                    <th className="py-2 text-left">Name</th>
+                    <th className="py-2 text-right">Story Points</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <AnimatePresence mode="popLayout">
-                    {users
-                      .filter(user => user.id !== scrumMasterId) // Exclude Scrum Master
-                      .map((user, index) => (
+                  <AnimatePresence>
+                    {users.map((user, index) => (
                       <motion.tr
                         key={user.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 500,
-                          damping: 30,
-                          delay: index * 0.1
-                        }}
-                        className={`
-                          ${index % 2 === 0 
-                            ? theme === "dark" ? "bg-gray-800/30" : "bg-gray-50/50"
-                            : ""
-                          }
-                          transition-colors hover:bg-gray-500/10
-                        `}
+                        transition={{ delay: index * 0.05 }}
+                        className="h-12"
                       >
-                        <td className="px-4 py-3">
-                          <div className="flex gap-2 items-center">
-                            <span className="font-medium">{user.name}</span>
-                            {user.id === socket.id && (
-                              <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500">
-                                You
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex gap-2 justify-end items-center">
-                            {user.estimate ? (
-                              <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                transition={{
-                                  type: "spring",
-                                  stiffness: 500,
-                                  damping: 30
-                                }}
-                              >
-                                <ScrumPokerCard number={user.estimate} revealed={revealed} />
-                              </motion.div>
-                            ) : (
-                              <span className="text-sm italic text-gray-400">
-                                {revealed ? "No estimate" : "Thinking..."}
-                              </span>
-                            )}
-                          </div>
+                        <td>{user.name}</td>
+                        <td className="flex justify-end mt-2 w-full">
+                          {user.estimate && (
+                            <ScrumPokerCard
+                              number={user.estimate}
+                              revealed={revealed}
+                            />
+                          )}
                         </td>
                       </motion.tr>
                     ))}

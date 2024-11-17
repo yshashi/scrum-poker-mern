@@ -29,7 +29,8 @@ io.on('connection', (socket) => {
     rooms.set(roomId, {
       users: [{ id: socket.id, name: username, estimate: null }],
       scrumMaster: socket.id,
-      lastActivity: Date.now() // Set initial timestamp
+      lastActivity: Date.now(), // Set initial timestamp
+      estimatesRevealed: false // Initialize the flag
     });
     socket.join(roomId);
     callback(roomId, rooms.get(roomId).users);
@@ -54,6 +55,10 @@ io.on('connection', (socket) => {
   socket.on('submit-estimate', (roomId, estimate) => {
     const room = rooms.get(roomId);
     if (room) {
+      // Check if estimates are revealed
+      if (room.estimatesRevealed) {
+        return;
+      }
       room.lastActivity = Date.now(); // Update timestamp when an estimate is submitted
       const user = room.users.find((u) => u.id === socket.id);
       if (user) {
@@ -67,15 +72,17 @@ io.on('connection', (socket) => {
     const room = rooms.get(roomId);
     if (room && room.scrumMaster === socket.id) {
       room.lastActivity = Date.now(); // Update room activity
+      room.estimatesRevealed = true; // Add this flag
       io.to(roomId).emit('estimates-revealed', true);
     }
   });
 
-// hide estimates
+  // hide estimates
   socket.on('hide-estimates', (roomId) => {
     const room = rooms.get(roomId);
     if (room && room.scrumMaster === socket.id) {
       room.lastActivity = Date.now(); // Update room activity
+      room.estimatesRevealed = false; // Update the flag
       io.to(roomId).emit('estimates-revealed', false);
     }
   });
@@ -84,6 +91,7 @@ io.on('connection', (socket) => {
     const room = rooms.get(roomId);
     if (room && room.scrumMaster === socket.id) {
       room.lastActivity = Date.now(); // Update room activity
+      room.estimatesRevealed = false; // Reset the flag
       room.users.forEach((user) => {
         user.estimate = null;
       });
