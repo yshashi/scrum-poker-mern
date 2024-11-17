@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import UserList from "./UserList";
 import PokerCard from "./PokerCard";
-import { Sun, Moon, Users, Share2, Check } from "lucide-react";
+import { Users, Share2, Check } from "lucide-react";
 import Confetti from "react-confetti";
 import { useTheme } from "../contexts/ThemeContext";
 import ScrumPokerCard from "./ScrumPokercard";
@@ -32,7 +32,7 @@ const Room: React.FC<RoomProps> = ({
   setIsScrumMaster,
   joinedUsers,
 }) => {
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const [users, setUsers] = useState<User[]>(joinedUsers);
   const [scrumMasterId, setScrumMasterId] = useState<string>("");
   const [estimate, setEstimate] = useState<string | null>(null);
@@ -151,19 +151,6 @@ const Room: React.FC<RoomProps> = ({
         theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-800"
       }`}
     >
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={toggleTheme}
-        className={`fixed top-4 right-4 p-3 rounded-full ${
-          theme === "dark"
-            ? "bg-gray-800 text-white"
-            : "bg-white text-gray-800"
-        } hover:bg-opacity-80 transition-colors shadow-lg`}
-      >
-        {theme === "dark" ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
-      </motion.button>
-
       <motion.button
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
