@@ -128,15 +128,15 @@ const Changelog: React.FC<ChangelogProps> = ({ previousRoom, username, isScrumMa
   useEffect(() => {
     // If we have previous session data, store it in localStorage
     if (previousRoom && username && isScrumMaster !== undefined && users) {
-      localStorage.setItem('previousRoom', previousRoom);
-      localStorage.setItem('previousUsername', username);
-      localStorage.setItem('previousIsScrumMaster', String(isScrumMaster));
-      localStorage.setItem('previousUsers', JSON.stringify(users));
+      sessionStorage.setItem('previousRoom', previousRoom);
+      sessionStorage.setItem('previousUsername', username);
+      sessionStorage.setItem('previousIsScrumMaster', String(isScrumMaster));
+      sessionStorage.setItem('previousUsers', JSON.stringify(users));
     }
   }, [previousRoom, username, isScrumMaster, users]);
 
   const handleBackToRoom = () => {
-    const room = previousRoom || localStorage.getItem('previousRoom');
+    const room = previousRoom || sessionStorage.getItem('previousRoom');
     if (room) {
       navigate(`/room/${room}`);
     } else {

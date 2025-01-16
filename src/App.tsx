@@ -28,10 +28,10 @@ const AppContent: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const storedRoom = localStorage.getItem('room');
-    const storedUsername = localStorage.getItem('username');
-    const storedIsScrumMaster = localStorage.getItem('isScrumMaster');
-    const storedUsers = localStorage.getItem('users');
+    const storedRoom = sessionStorage.getItem('room');
+    const storedUsername = sessionStorage.getItem('username');
+    const storedIsScrumMaster = sessionStorage.getItem('isScrumMaster');
+    const storedUsers = sessionStorage.getItem('users');
 
     if (storedRoom && storedUsername && storedIsScrumMaster && storedUsers) {
       setRoom(storedRoom);
@@ -43,15 +43,15 @@ const AppContent: React.FC = () => {
 
   useEffect(() => {
     if (room && username && isScrumMaster !== null && users.length > 0) {
-      localStorage.setItem('room', room);
-      localStorage.setItem('username', username);
-      localStorage.setItem('isScrumMaster', isScrumMaster.toString());
-      localStorage.setItem('users', JSON.stringify(users));
+      sessionStorage.setItem('room', room);
+      sessionStorage.setItem('username', username);
+      sessionStorage.setItem('isScrumMaster', isScrumMaster.toString());
+      sessionStorage.setItem('users', JSON.stringify(users));
     } else {
-      localStorage.removeItem('room');
-      localStorage.removeItem('username');
-      localStorage.removeItem('isScrumMaster');
-      localStorage.removeItem('users');
+      sessionStorage.removeItem('room');
+      sessionStorage.removeItem('username');
+      sessionStorage.removeItem('isScrumMaster');
+      sessionStorage.removeItem('users');
     }
   }, [room, username, isScrumMaster, users]);
 
