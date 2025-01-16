@@ -416,7 +416,7 @@ const Room: React.FC<RoomProps> = ({
               exit={{ x: 300, opacity: 0 }}
               className={`fixed md:relative right-0 top-0 h-full md:h-min md:min-w-80 ${
                 theme === "dark" ? "bg-gray-800" : "bg-white"
-              } p-6 rounded-lg shadow-lg md:shadow-none z-50`}
+              } p-6 rounded-lg shadow-lg md:shadow-none z-30`}
             >
               <UserList
                 users={users}

@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../contexts/ThemeContext';
 import { History, Star, Shield, Zap } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+interface ChangelogProps {
+  previousRoom?: string;
+  username?: string;
+  isScrumMaster?: boolean;
+  users?: unknown[];
+}
 
 interface ChangelogEntry {
   version: string;
@@ -13,6 +21,28 @@ interface ChangelogEntry {
 }
 
 const changelog: ChangelogEntry[] = [
+  {
+    version: '1.2.0',
+    date: '16-01-2025',
+    changes: [
+      {
+        type: 'improvement',
+        description: 'Enhanced header design with better spacing and animations'
+      },
+      {
+        type: 'improvement',
+        description: 'Made room ID in header clickable for easy room navigation'
+      },
+      {
+        type: 'improvement',
+        description: 'Added hover effects and transitions to header elements'
+      },
+      {
+        type: 'improvement',
+        description: 'Improved mobile responsiveness in header'
+      }
+    ]
+  },
   {
     version: '1.1.0',
     date: '17-11-2024',
@@ -91,8 +121,28 @@ const changelog: ChangelogEntry[] = [
   }
 ];
 
-const Changelog: React.FC = () => {
+const Changelog: React.FC<ChangelogProps> = ({ previousRoom, username, isScrumMaster, users }) => {
   const { theme } = useTheme();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // If we have previous session data, store it in localStorage
+    if (previousRoom && username && isScrumMaster !== undefined && users) {
+      localStorage.setItem('previousRoom', previousRoom);
+      localStorage.setItem('previousUsername', username);
+      localStorage.setItem('previousIsScrumMaster', String(isScrumMaster));
+      localStorage.setItem('previousUsers', JSON.stringify(users));
+    }
+  }, [previousRoom, username, isScrumMaster, users]);
+
+  const handleBackToRoom = () => {
+    const room = previousRoom || localStorage.getItem('previousRoom');
+    if (room) {
+      navigate(`/room/${room}`);
+    } else {
+      navigate('/');
+    }
+  };
 
   const getIconForType = (type: string) => {
     switch (type) {
@@ -122,12 +172,25 @@ const Changelog: React.FC = () => {
   };
 
   return (
-    <div className="px-4 py-12 min-h-screen sm:px-6 lg:px-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mx-auto max-w-4xl"
-      >
+    <div className={`min-h-screen p-8 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+      <div className="mx-auto max-w-4xl">
+        {previousRoom && (
+          <motion.button
+            onClick={handleBackToRoom}
+            className={`mb-6 px-4 py-2 rounded-lg flex items-center gap-2 ${
+              theme === 'dark' 
+                ? 'bg-gray-800 hover:bg-gray-700 text-gray-300' 
+                : 'bg-white hover:bg-gray-100 text-gray-700'
+            } transition-colors duration-200 shadow-sm`}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+            </svg>
+            Back to Room
+          </motion.button>
+        )}
         <div className="flex gap-3 items-center mb-8">
           <History className={`w-8 h-8 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
           <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">
@@ -197,7 +260,7 @@ const Changelog: React.FC = () => {
             </motion.div>
           ))}
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };
