@@ -16,7 +16,7 @@ A modern, real-time planning poker application built with React, Node.js, and So
 
 ## Live Demo
 
-Try out the live demo at: [https://pocker.letsprogram.in](https://pocker.letsprogram.in)
+Try out the live demo at: [https://poker.letsprogram.in](https://poker.letsprogram.in)
 
 ## Tech Stack
 
