@@ -93,11 +93,11 @@ const LandingPage: React.FC = () => {
         : 'bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200'
       }
     `}>
-      <div className="w-full max-w-6xl px-4 mx-auto">
+      <div className="px-4 mx-auto w-full max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16"
+          className="mb-16 text-center"
         >
           <motion.div
             initial={{ scale: 0.5 }}
@@ -129,7 +129,7 @@ const LandingPage: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="text-xl mb-8 max-w-2xl mx-auto text-gray-200"
+            className="mx-auto mb-8 max-w-2xl text-xl dark:text-gray-200"
           >
             Streamline your agile estimation process with our intuitive and collaborative
             planning poker tool. Make team planning sessions more efficient and engaging!
@@ -158,7 +158,7 @@ const LandingPage: React.FC = () => {
           </motion.div>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
+        <div className="grid grid-cols-1 gap-6 mt-16 md:grid-cols-2">
           {features.map((feature, index) => (
             <FeatureCard key={index} {...feature} />
           ))}
